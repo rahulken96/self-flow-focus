@@ -1,6 +1,6 @@
 # WorkFlow — Personal Productivity Dashboard
 
-WorkFlow adalah dashboard produktivitas pribadi satu halaman yang dirancang untuk mendukung suasana kerja yang fokus dan terorganisir. Terinspirasi oleh estetika desain Trakteer.id & Saweria.co dengan skema warna cerah, sudut membulat (*rounded corners*), bayangan solid (*solid flat shadows*), serta dukungan penuh *light* dan *dark mode*.
+WorkFlow adalah dashboard produktivitas pribadi satu halaman yang dirancang untuk mendukung suasana kerja yang fokus dan terorganisir. Terinspirasi oleh estetika desain ```Trakteer.id & Saweria.co``` dengan skema warna cerah, sudut membulat (*rounded corners*), bayangan solid (*solid flat shadows*), serta dukungan penuh *light* dan *dark mode*.
 
 ## 🚀 Fitur Utama
 
@@ -45,5 +45,5 @@ WorkFlow adalah dashboard produktivitas pribadi satu halaman yang dirancang untu
 Aplikasi ini dapat dijalankan sepenuhnya secara offline tanpa memerlukan server, bundler, atau instalasi `npm`.
 
 1. Clone repository ini.
-2. Buka folder `test2/`.
+2. Buka folder `self-flow-focus/`.
 3. Klik dua kali pada file `index.html` untuk membukanya langsung di web browser pilihan Anda (Chrome, Edge, Firefox, Safari, dll).
