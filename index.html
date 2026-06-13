@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkFlow — Productivity Dashboard</title>
+    <meta name="description" content="Personal productivity dashboard with Pomodoro timer, todo list, kanban board, and more.">
+
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- ========== SIDEBAR ========== -->
+        <nav id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="bi bi-lightning-charge-fill"></i>
+                    <span class="sidebar-brand">WorkFlow</span>
+                </div>
+                <button id="sidebarToggle" class="sidebar-toggle" aria-label="Toggle sidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+
+            <div class="sidebar-nav">
+                <!-- Dashboard Home -->
+                <div class="nav-section">
+                    <span class="nav-section-label">Home</span>
+                    <a href="#" class="nav-link active" data-page="dashboard">
+                        <i class="bi bi-grid-1x2-fill"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </div>
+
+                <!-- Focus & Timer -->
+                <div class="nav-section">
+                    <span class="nav-section-label">Focus & Timer</span>
+                    <a href="#" class="nav-link" data-page="pomodoro">
+                        <i class="bi bi-clock-fill"></i>
+                        <span>Pomodoro Timer</span>
+                    </a>
+                    <a href="#" class="nav-link" data-page="session-log">
+                        <i class="bi bi-journal-text"></i>
+                        <span>Session Log</span>
+                    </a>
+                </div>
+
+                <!-- Tasks & Planning -->
+                <div class="nav-section">
+                    <span class="nav-section-label">Tasks & Planning</span>
+                    <a href="#" class="nav-link" data-page="todo">
+                        <i class="bi bi-check2-square"></i>
+                        <span>Todo List</span>
+                    </a>
+                    <a href="#" class="nav-link" data-page="kanban">
+                        <i class="bi bi-kanban-fill"></i>
+                        <span>Kanban Board</span>
+                    </a>
+                    <a href="#" class="nav-link" data-page="eisenhower">
+                        <i class="bi bi-grid-3x3-gap-fill"></i>
+                        <span>Eisenhower Matrix</span>
+                    </a>
+                </div>
+
+                <!-- Notes & Ideas -->
+                <div class="nav-section">
+                    <span class="nav-section-label">Notes & Ideas</span>
+                    <a href="#" class="nav-link" data-page="sticky-notes">
+                        <i class="bi bi-sticky-fill"></i>
+                        <span>Sticky Notes</span>
+                    </a>
+                    <a href="#" class="nav-link" data-page="quotes">
+                        <i class="bi bi-chat-quote-fill"></i>
+                        <span>Daily Quote</span>
+                    </a>
+                </div>
+
+                <!-- Habits & Wellness -->
+                <div class="nav-section">
+                    <span class="nav-section-label">Habits & Wellness</span>
+                    <a href="#" class="nav-link" data-page="habits">
+                        <i class="bi bi-bar-chart-fill"></i>
+                        <span>Habit Tracker</span>
+                    </a>
+                    <a href="#" class="nav-link" data-page="ambient">
+                        <i class="bi bi-music-note-beamed"></i>
+                        <span>Ambient Sound</span>
+                    </a>
+                </div>
+
+                <!-- Tools -->
+                <div class="nav-section">
+                    <span class="nav-section-label">Tools</span>
+                    <a href="#" class="nav-link" data-page="calculator">
+                        <i class="bi bi-calculator-fill"></i>
+                        <span>Kalkulator & Kurs</span>
+                    </a>
+                </div>
+
+                <!-- Settings -->
+                <div class="nav-section">
+                    <span class="nav-section-label">Settings</span>
+                    <a href="#" class="nav-link" data-page="settings">
+                        <i class="bi bi-gear-fill"></i>
+                        <span>Settings & Data</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Theme Toggle -->
+            <div class="sidebar-footer">
+                <button id="themeToggle" class="theme-toggle-btn">
+                    <i class="bi bi-sun-fill" id="themeIcon"></i>
+                    <span id="themeLabel">Light Mode</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- ========== MAIN CONTENT ========== -->
+        <main id="mainContent" class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <button id="mobileSidebarToggle" class="mobile-sidebar-toggle d-lg-none">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <h1 id="pageTitle" class="page-title">Dashboard</h1>
+                </div>
+                <div class="top-bar-right">
+                    <span id="currentDate" class="current-date"></span>
+                    <span id="currentTime" class="current-time"></span>
+                </div>
+            </header>
+
+            <!-- Page Container -->
+            <div class="page-container">
+                <!-- ===== DASHBOARD HOME ===== -->
+                <section id="page-dashboard" class="page-content active">
+                    <div class="row g-4">
+                        <!-- Quick Stats -->
+                        <div class="col-md-3">
+                            <div class="stat-card stat-card-primary">
+                                <div class="stat-icon"><i class="bi bi-clock-fill"></i></div>
+                                <div class="stat-info">
+                                    <span class="stat-value" id="statPomodoros">0</span>
+                                    <span class="stat-label">Pomodoro Hari Ini</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card stat-card-success">
+                                <div class="stat-icon"><i class="bi bi-check2-circle"></i></div>
+                                <div class="stat-info">
+                                    <span class="stat-value" id="statTasksDone">0</span>
+                                    <span class="stat-label">Task Selesai</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card stat-card-warning">
+                                <div class="stat-icon"><i class="bi bi-fire"></i></div>
+                                <div class="stat-info">
+                                    <span class="stat-value" id="statStreak">0</span>
+                                    <span class="stat-label">Habit Streak</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card stat-card-accent">
+                                <div class="stat-icon"><i class="bi bi-hourglass-split"></i></div>
+                                <div class="stat-info">
+                                    <span class="stat-value" id="statFocusTime">0m</span>
+                                    <span class="stat-label">Focus Time</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mini Pomodoro -->
+                        <div class="col-md-6">
+                            <div class="wf-card">
+                                <div class="wf-card-header">
+                                    <h2><i class="bi bi-clock-fill"></i> Quick Pomodoro</h2>
+                                    <a href="#" class="card-link" data-page="pomodoro">Buka <i class="bi bi-arrow-right"></i></a>
+                                </div>
+                                <div class="wf-card-body text-center">
+                                    <div class="mini-timer-display" id="miniTimerDisplay">25:00</div>
+                                    <div class="mini-timer-controls">
+                                        <button class="wf-btn wf-btn-primary" id="miniTimerStart"><i class="bi bi-play-fill"></i> Start</button>
+                                        <button class="wf-btn wf-btn-outline" id="miniTimerReset"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mini Todo -->
+                        <div class="col-md-6">
+                            <div class="wf-card">
+                                <div class="wf-card-header">
+                                    <h2><i class="bi bi-check2-square"></i> Quick Todo</h2>
+                                    <a href="#" class="card-link" data-page="todo">Buka <i class="bi bi-arrow-right"></i></a>
+                                </div>
+                                <div class="wf-card-body">
+                                    <div id="miniTodoList" class="mini-todo-list">
+                                        <p class="text-muted-custom">Belum ada task. Tambahkan di halaman Todo.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Daily Quote -->
+                        <div class="col-12">
+                            <div class="wf-card quote-card-dashboard">
+                                <div class="wf-card-body text-center">
+                                    <i class="bi bi-quote quote-icon-big"></i>
+                                    <p class="quote-text-dashboard" id="dashboardQuote">Loading inspirasi...</p>
+                                    <span class="quote-author-dashboard" id="dashboardQuoteAuthor"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== POMODORO TIMER ===== -->
+                <section id="page-pomodoro" class="page-content">
+                    <div class="row g-4 justify-content-center">
+                        <div class="col-lg-6">
+                            <div class="wf-card pomodoro-card">
+                                <div class="wf-card-header">
+                                    <h2><i class="bi bi-clock-fill"></i> Pomodoro Timer</h2>
+                                </div>
+                                <div class="wf-card-body text-center">
+                                    <!-- Timer Mode Tabs -->
+                                    <div class="pomodoro-modes">
+                                        <button class="pomo-mode-btn active" data-mode="work">Focus</button>
+                                        <button class="pomo-mode-btn" data-mode="short">Short Break</button>
+                                        <button class="pomo-mode-btn" data-mode="long">Long Break</button>
+                                    </div>
+
+                                    <!-- Timer Ring -->
+                                    <div class="timer-ring-container">
+                                        <svg class="timer-ring" viewBox="0 0 200 200">
+                                            <circle class="timer-ring-bg" cx="100" cy="100" r="90" />
+                                            <circle class="timer-ring-progress" id="timerProgress" cx="100" cy="100" r="90" />
+                                        </svg>
+                                        <div class="timer-display" id="timerDisplay">25:00</div>
+                                        <div class="timer-label" id="timerLabel">Focus Time</div>
+                                    </div>
+
+                                    <!-- Controls -->
+                                    <div class="timer-controls">
+                                        <button class="wf-btn wf-btn-lg wf-btn-primary" id="timerStartPause">
+                                            <i class="bi bi-play-fill"></i> Start
+                                        </button>
+                                        <button class="wf-btn wf-btn-lg wf-btn-outline" id="timerReset">
+                                            <i class="bi bi-arrow-counterclockwise"></i> Reset
+                                        </button>
+                                    </div>
+
+                                    <!-- Session Label -->
+                                    <div class="session-label-input mt-3">
+                                        <input type="text" class="wf-input" id="sessionLabel" placeholder="Label sesi (opsional)..." maxlength="50">
+                                    </div>
+
+                                    <!-- Pomodoro Counter -->
+                                    <div class="pomo-counter mt-3">
+                                        <span class="pomo-counter-label">Sesi hari ini:</span>
+                                        <span class="pomo-counter-value" id="pomoCount">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="wf-card">
+                                <div class="wf-card-header">
+                                    <h2><i class="bi bi-gear-fill"></i> Pengaturan Timer</h2>
+                                </div>
+                                <div class="wf-card-body">
+                                    <div class="timer-setting">
+                                        <label>Focus Duration (menit)</label>
+                                        <input type="number" class="wf-input" id="settingWork" value="25" min="1" max="120">
+                                    </div>
+                                    <div class="timer-setting">
+                                        <label>Short Break (menit)</label>
+                                        <input type="number" class="wf-input" id="settingShort" value="5" min="1" max="30">
+                                    </div>
+                                    <div class="timer-setting">
+                                        <label>Long Break (menit)</label>
+                                        <input type="number" class="wf-input" id="settingLong" value="15" min="1" max="60">
+                                    </div>
+                                    <div class="timer-setting">
+                                        <label>Long break setelah (sesi)</label>
+                                        <input type="number" class="wf-input" id="settingLongAfter" value="4" min="2" max="10">
+                                    </div>
+                                    <div class="timer-setting">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="settingAutoSwitch" checked>
+                                            <label class="form-check-label" for="settingAutoSwitch">Auto-switch ke break</label>
+                                        </div>
+                                    </div>
+                                    <div class="timer-setting">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="settingSound" checked>
+                                            <label class="form-check-label" for="settingSound">Notifikasi suara</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== SESSION LOG ===== -->
+                <section id="page-session-log" class="page-content">
+                    <div class="row g-4">
+                        <div class="col-lg-4">
+                            <div class="wf-card">
+                                <div class="wf-card-header"><h2><i class="bi bi-bar-chart-line-fill"></i> Ringkasan Hari Ini</h2></div>
+                                <div class="wf-card-body">
+                                    <div class="session-summary">
+                                        <div class="summary-item">
+                                            <span class="summary-label">Total Sesi</span>
+                                            <span class="summary-value" id="logTotalSessions">0</span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span class="summary-label">Total Fokus</span>
+                                            <span class="summary-value" id="logTotalFocus">0m</span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span class="summary-label">Rata-rata/Sesi</span>
+                                            <span class="summary-value" id="logAvgSession">0m</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="wf-card">
+                                <div class="wf-card-header">
+                                    <h2><i class="bi bi-journal-text"></i> Riwayat Sesi</h2>
+                                    <button class="wf-btn wf-btn-sm wf-btn-danger" id="clearSessionLog">
+                                        <i class="bi bi-trash3"></i> Hapus Semua
+                                    </button>
+                                </div>
+                                <div class="wf-card-body">
+                                    <div class="table-responsive">
+                                        <table class="wf-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Waktu</th>
+                                                    <th>Label</th>
+                                                    <th>Durasi</th>
+                                                    <th>Tipe</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="sessionLogBody">
+                                                <tr><td colspan="4" class="text-center text-muted-custom">Belum ada sesi tercatat.</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== TODO LIST ===== -->
+                <section id="page-todo" class="page-content">
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="wf-card">
+                                <div class="wf-card-header">
+                                    <h2><i class="bi bi-check2-square"></i> Todo List</h2>
+                                    <div class="todo-filters">
+                                        <button class="filter-btn active" data-filter="all">Semua</button>
+                                        <button class="filter-btn" data-filter="active">Aktif</button>
+                                        <button class="filter-btn" data-filter="completed">Selesai</button>
+                                    </div>
+                                </div>
+                                <div class="wf-card-body">
+                                    <!-- Add Todo Form -->
+                                    <form id="todoForm" class="todo-form">
+                                        <div class="todo-input-group">
+                                            <input type="text" class="wf-input" id="todoInput" placeholder="Tambahkan task baru..." required>
+                                            <select class="wf-select" id="todoPriority">
+                                                <option value="low">🟢 Low</option>
+                                                <option value="medium" selected>🟡 Medium</option>
+                                                <option value="high">🔴 High</option>
+                                            </select>
+                                            <button type="submit" class="wf-btn wf-btn-primary">
+                                                <i class="bi bi-plus-lg"></i> Tambah
+                                            </button>
+                                        </div>
+                                    </form>
+                                    <!-- Todo Items -->
+                                    <div id="todoList" class="todo-list">
+                                        <p class="text-muted-custom text-center py-4">Belum ada task. Mulai tambahkan!</p>
+                                    </div>
+                                    <!-- Todo Footer -->
+                                    <div class="todo-footer">
+                                        <span id="todoCount">0 task tersisa</span>
+                                        <button class="wf-btn wf-btn-sm wf-btn-danger" id="clearCompleted">
+                                            <i class="bi bi-trash3"></i> Hapus Selesai
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== KANBAN BOARD ===== -->
+                <section id="page-kanban" class="page-content">
+                    <div class="wf-card mb-3">
+                        <div class="wf-card-header">
+                            <h2><i class="bi bi-kanban-fill"></i> Kanban Board</h2>
+                            <button class="wf-btn wf-btn-primary wf-btn-sm" id="addKanbanCard">
+                                <i class="bi bi-plus-lg"></i> Tambah Card
+                            </button>
+                        </div>
+                    </div>
+                    <div class="kanban-board">
+                        <div class="kanban-column" data-column="todo">
+                            <div class="kanban-column-header">
+                                <span class="kanban-column-title">📋 To Do</span>
+                                <span class="kanban-count" id="kanbanCountTodo">0</span>
+                            </div>
+                            <div class="kanban-cards" id="kanbanTodo"></div>
+                        </div>
+                        <div class="kanban-column" data-column="progress">
+                            <div class="kanban-column-header">
+                                <span class="kanban-column-title">🔄 In Progress</span>
+                                <span class="kanban-count" id="kanbanCountProgress">0</span>
+                            </div>
+                            <div class="kanban-cards" id="kanbanProgress"></div>
+                        </div>
+                        <div class="kanban-column" data-column="done">
+                            <div class="kanban-column-header">
+                                <span class="kanban-column-title">✅ Done</span>
+                                <span class="kanban-count" id="kanbanCountDone">0</span>
+                            </div>
+                            <div class="kanban-cards" id="kanbanDone"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== EISENHOWER MATRIX ===== -->
+                <section id="page-eisenhower" class="page-content">
+                    <div class="wf-card mb-3">
+                        <div class="wf-card-header">
+                            <h2><i class="bi bi-grid-3x3-gap-fill"></i> Eisenhower Matrix</h2>
+                            <button class="wf-btn wf-btn-primary wf-btn-sm" id="addEisenhowerTask">
+                                <i class="bi bi-plus-lg"></i> Tambah Task
+                            </button>
+                        </div>
+                    </div>
+                    <div class="eisenhower-grid">
+                        <div class="eisenhower-labels-top">
+                            <div></div>
+                            <div class="eisenhower-label">Urgent</div>
+                            <div class="eisenhower-label">Not Urgent</div>
+                        </div>
+                        <div class="eisenhower-row">
+                            <div class="eisenhower-label-side">Important</div>
+                            <div class="eisenhower-quadrant eq-do" data-quadrant="do">
+                                <div class="eq-title">🔥 DO</div>
+                                <div class="eq-subtitle">Urgent & Important</div>
+                                <div class="eq-items" id="eqDo"></div>
+                            </div>
+                            <div class="eisenhower-quadrant eq-schedule" data-quadrant="schedule">
+                                <div class="eq-title">📅 SCHEDULE</div>
+                                <div class="eq-subtitle">Not Urgent & Important</div>
+                                <div class="eq-items" id="eqSchedule"></div>
+                            </div>
+                        </div>
+                        <div class="eisenhower-row">
+                            <div class="eisenhower-label-side">Not Important</div>
+                            <div class="eisenhower-quadrant eq-delegate" data-quadrant="delegate">
+                                <div class="eq-title">👥 DELEGATE</div>
+                                <div class="eq-subtitle">Urgent & Not Important</div>
+                                <div class="eq-items" id="eqDelegate"></div>
+                            </div>
+                            <div class="eisenhower-quadrant eq-eliminate" data-quadrant="eliminate">
+                                <div class="eq-title">🗑️ ELIMINATE</div>
+                                <div class="eq-subtitle">Not Urgent & Not Important</div>
+                                <div class="eq-items" id="eqEliminate"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== STICKY NOTES ===== -->
+                <section id="page-sticky-notes" class="page-content">
+                    <div class="wf-card mb-3">
+                        <div class="wf-card-header">
+                            <h2><i class="bi bi-sticky-fill"></i> Sticky Notes</h2>
+                            <button class="wf-btn wf-btn-primary wf-btn-sm" id="addStickyNote">
+                                <i class="bi bi-plus-lg"></i> Tambah Note
+                            </button>
+                        </div>
+                    </div>
+                    <div class="sticky-grid" id="stickyGrid">
+                        <div class="sticky-empty">
+                            <i class="bi bi-sticky"></i>
+                            <p>Belum ada catatan. Klik tombol + untuk menambahkan.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== DAILY QUOTE ===== -->
+                <section id="page-quotes" class="page-content">
+                    <div class="row g-4 justify-content-center">
+                        <div class="col-lg-8">
+                            <div class="wf-card quote-card">
+                                <div class="wf-card-body text-center py-5">
+                                    <div class="quote-decoration">
+                                        <i class="bi bi-quote"></i>
+                                    </div>
+                                    <blockquote class="quote-text" id="quoteText">
+                                        Loading quote...
+                                    </blockquote>
+                                    <cite class="quote-author" id="quoteAuthor">—</cite>
+                                    <div class="mt-4">
+                                        <button class="wf-btn wf-btn-primary" id="refreshQuote">
+                                            <i class="bi bi-arrow-clockwise"></i> Quote Baru
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="wf-card">
+                                <div class="wf-card-header"><h2><i class="bi bi-bookmark-heart-fill"></i> Favorit</h2></div>
+                                <div class="wf-card-body">
+                                    <div id="favoriteQuotes" class="favorite-quotes-list">
+                                        <p class="text-muted-custom text-center">Belum ada quote favorit.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== HABIT TRACKER ===== -->
+                <section id="page-habits" class="page-content">
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="wf-card">
+                                <div class="wf-card-header">
+                                    <h2><i class="bi bi-bar-chart-fill"></i> Habit Tracker</h2>
+                                    <button class="wf-btn wf-btn-primary wf-btn-sm" id="addHabit">
+                                        <i class="bi bi-plus-lg"></i> Tambah Habit
+                                    </button>
+                                </div>
+                                <div class="wf-card-body">
+                                    <div class="habit-week-header" id="habitWeekHeader">
+                                        <!-- Days of week rendered by JS -->
+                                    </div>
+                                    <div id="habitList" class="habit-list">
+                                        <p class="text-muted-custom text-center py-4">Belum ada habit. Mulai tracking kebiasaan baikmu!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== AMBIENT SOUND ===== -->
+                <section id="page-ambient" class="page-content">
+                    <div class="row g-4 justify-content-center">
+                        <div class="col-lg-8">
+                            <div class="wf-card">
+                                <div class="wf-card-header">
+                                    <h2><i class="bi bi-music-note-beamed"></i> Ambient Sound</h2>
+                                </div>
+                                <div class="wf-card-body">
+                                    <p class="text-muted-custom mb-4">Mix suara untuk menciptakan suasana kerja yang sempurna.</p>
+                                    <div class="ambient-grid" id="ambientGrid">
+                                        <!-- Sound cards rendered by JS -->
+                                    </div>
+                                    <div class="ambient-master mt-4">
+                                        <label class="ambient-master-label"><i class="bi bi-volume-up-fill"></i> Master Volume</label>
+                                        <input type="range" class="wf-range" id="masterVolume" min="0" max="100" value="70">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== KALKULATOR & KURS ===== -->
+                <section id="page-calculator" class="page-content">
+                    <div class="row g-4 justify-content-center">
+                        <div class="col-lg-8">
+                            <div class="wf-card">
+                                <div class="wf-card-header">
+                                    <h2><i class="bi bi-calculator-fill"></i> Kalkulator & Kurs</h2>
+                                    <div class="calculator-modes">
+                                        <button class="calc-mode-btn active" data-calc-tab="standard">Biasa</button>
+                                        <button class="calc-mode-btn" data-calc-tab="scientific">Saintifik</button>
+                                        <button class="calc-mode-btn" data-calc-tab="currency">Kurs Mata Uang</button>
+                                    </div>
+                                </div>
+                                <div class="wf-card-body">
+                                    <!-- Standard Calc Tab -->
+                                    <div id="calc-tab-standard" class="calc-tab-content">
+                                        <div class="calc-display-container">
+                                            <div class="calc-history" id="stdHistory"></div>
+                                            <div class="calc-input" id="stdInput">0</div>
+                                        </div>
+                                        <div class="calc-grid" id="std-calc-buttons">
+                                            <button class="calc-btn calc-btn-action" data-action="clear">C</button>
+                                            <button class="calc-btn calc-btn-operator" data-val="(">(</button>
+                                            <button class="calc-btn calc-btn-operator" data-val=")">)</button>
+                                            <button class="calc-btn calc-btn-operator" data-val="/">÷</button>
+
+                                            <button class="calc-btn" data-val="7">7</button>
+                                            <button class="calc-btn" data-val="8">8</button>
+                                            <button class="calc-btn" data-val="9">9</button>
+                                            <button class="calc-btn calc-btn-operator" data-val="*">×</button>
+
+                                            <button class="calc-btn" data-val="4">4</button>
+                                            <button class="calc-btn" data-val="5">5</button>
+                                            <button class="calc-btn" data-val="6">6</button>
+                                            <button class="calc-btn calc-btn-operator" data-val="-">-</button>
+
+                                            <button class="calc-btn" data-val="1">1</button>
+                                            <button class="calc-btn" data-val="2">2</button>
+                                            <button class="calc-btn" data-val="3">3</button>
+                                            <button class="calc-btn calc-btn-operator" data-val="+">+</button>
+
+                                            <button class="calc-btn calc-btn-action" data-action="backspace">⌫</button>
+                                            <button class="calc-btn" data-val="0">0</button>
+                                            <button class="calc-btn" data-val=".">.</button>
+                                            <button class="calc-btn calc-btn-equals" data-action="equals">=</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Scientific Calc Tab -->
+                                    <div id="calc-tab-scientific" class="calc-tab-content d-none">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <button class="wf-btn wf-btn-sm wf-btn-primary" data-action="deg-rad" id="degRadToggle">DEG</button>
+                                            <span class="text-muted-custom small">Gunakan tanda kurung untuk fungsi (misal: sin(45))</span>
+                                        </div>
+                                        <div class="calc-display-container">
+                                            <div class="calc-history" id="sciHistory"></div>
+                                            <div class="calc-input" id="sciInput">0</div>
+                                        </div>
+                                        <div class="calc-sci-grid" id="sci-calc-buttons">
+                                            <button class="calc-btn calc-btn-operator" data-val="sin(">sin</button>
+                                            <button class="calc-btn calc-btn-operator" data-val="cos(">cos</button>
+                                            <button class="calc-btn calc-btn-operator" data-val="tan(">tan</button>
+                                            <button class="calc-btn calc-btn-action" data-action="clear">C</button>
+                                            <button class="calc-btn calc-btn-action" data-action="backspace">⌫</button>
+
+                                            <button class="calc-btn calc-btn-operator" data-val="log(">log</button>
+                                            <button class="calc-btn calc-btn-operator" data-val="ln(">ln</button>
+                                            <button class="calc-btn calc-btn-operator" data-val="^">^</button>
+                                            <button class="calc-btn calc-btn-operator" data-val="sqrt(">√</button>
+                                            <button class="calc-btn calc-btn-operator" data-val="/">÷</button>
+
+                                            <button class="calc-btn calc-btn-operator" data-val="π">π</button>
+                                            <button class="calc-btn calc-btn-operator" data-val="e">e</button>
+                                            <button class="calc-btn calc-btn-operator" data-val="(">(</button>
+                                            <button class="calc-btn calc-btn-operator" data-val=")">)</button>
+                                            <button class="calc-btn calc-btn-operator" data-val="*">×</button>
+
+                                            <button class="calc-btn" data-val="7">7</button>
+                                            <button class="calc-btn" data-val="8">8</button>
+                                            <button class="calc-btn" data-val="9">9</button>
+                                            <button class="calc-btn calc-btn-operator" data-val="-">-</button>
+                                            <button class="calc-btn calc-btn-operator" data-val="^2">x²</button>
+
+                                            <button class="calc-btn" data-val="4">4</button>
+                                            <button class="calc-btn" data-val="5">5</button>
+                                            <button class="calc-btn" data-val="6">6</button>
+                                            <button class="calc-btn calc-btn-operator" data-val="+">+</button>
+                                            <button class="calc-btn calc-btn-operator" data-val="1/">1/x</button>
+
+                                            <button class="calc-btn" data-val="1">1</button>
+                                            <button class="calc-btn" data-val="2">2</button>
+                                            <button class="calc-btn" data-val="3">3</button>
+                                            <button class="calc-btn" data-val=".">.</button>
+                                            <button class="calc-btn calc-btn-equals" data-action="equals" style="grid-row: span 2;">=</button>
+
+                                            <button class="calc-btn" data-val="0" style="grid-column: span 2;">0</button>
+                                            <button class="calc-btn calc-btn-operator" data-action="negate">+/-</button>
+                                            <button class="calc-btn calc-btn-operator" data-val="%">%</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Currency Exchange Tab -->
+                                    <div id="calc-tab-currency" class="calc-tab-content d-none">
+                                        <p class="text-muted-custom mb-4 small">Konversi kurs mata uang real-time. Membutuhkan koneksi internet untuk memperbarui kurs.</p>
+                                        <div class="row g-3 align-items-center">
+                                            <div class="col-md-5">
+                                                <label class="form-label font-weight-bold">Dari</label>
+                                                <select class="wf-select mb-2" id="currFrom">
+                                                    <option value="IDR" selected>IDR - Rupiah Indonesia</option>
+                                                    <option value="USD">USD - Dolar AS</option>
+                                                    <option value="EUR">EUR - Euro</option>
+                                                    <option value="JPY">JPY - Yen Jepang</option>
+                                                    <option value="SGD">SGD - Dolar Singapura</option>
+                                                    <option value="MYR">MYR - Ringgit Malaysia</option>
+                                                    <option value="GBP">GBP - Pound Sterling</option>
+                                                    <option value="AUD">AUD - Dolar Australia</option>
+                                                    <option value="SAR">SAR - Riyal Arab Saudi</option>
+                                                </select>
+                                                <input type="number" class="wf-input" id="currAmount" value="10000" min="0" placeholder="Jumlah">
+                                            </div>
+                                            
+                                            <div class="col-md-2 text-center mt-4">
+                                                <button class="wf-btn wf-btn-outline" id="swapCurrency" title="Tukar Mata Uang">
+                                                    <i class="bi bi-arrow-left-right d-none d-md-inline"></i>
+                                                    <i class="bi bi-arrow-down-up d-inline d-md-none"></i>
+                                                </button>
+                                            </div>
+
+                                            <div class="col-md-5">
+                                                <label class="form-label font-weight-bold">Ke</label>
+                                                <select class="wf-select mb-2" id="currTo">
+                                                    <option value="IDR">IDR - Rupiah Indonesia</option>
+                                                    <option value="USD" selected>USD - Dolar AS</option>
+                                                    <option value="EUR">EUR - Euro</option>
+                                                    <option value="JPY">JPY - Yen Jepang</option>
+                                                    <option value="SGD">SGD - Dolar Singapura</option>
+                                                    <option value="MYR">MYR - Ringgit Malaysia</option>
+                                                    <option value="GBP">GBP - Pound Sterling</option>
+                                                    <option value="AUD">AUD - Dolar Australia</option>
+                                                    <option value="SAR">SAR - Riyal Arab Saudi</option>
+                                                </select>
+                                                <input type="text" class="wf-input" id="currResult" readonly value="0.00">
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                                            <span class="text-muted-custom small" id="ratesLastUpdate">Memuat data kurs...</span>
+                                            <button class="wf-btn wf-btn-sm wf-btn-outline" id="updateRates">
+                                                <i class="bi bi-arrow-clockwise"></i> Perbarui Kurs
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== SETTINGS & DATA ===== -->
+                <section id="page-settings" class="page-content">
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <div class="wf-card">
+                                <div class="wf-card-header"><h2><i class="bi bi-download"></i> Export / Import Data</h2></div>
+                                <div class="wf-card-body">
+                                    <p class="text-muted-custom mb-3">Backup atau restore semua data WorkFlow.</p>
+                                    <div class="d-flex gap-3 flex-wrap">
+                                        <button class="wf-btn wf-btn-primary" id="exportData">
+                                            <i class="bi bi-box-arrow-up"></i> Export JSON
+                                        </button>
+                                        <label class="wf-btn wf-btn-secondary" for="importFile">
+                                            <i class="bi bi-box-arrow-in-down"></i> Import JSON
+                                        </label>
+                                        <input type="file" id="importFile" accept=".json" class="d-none">
+                                    </div>
+                                    <div id="importStatus" class="mt-3"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="wf-card">
+                                <div class="wf-card-header"><h2><i class="bi bi-trash3-fill"></i> Reset Data</h2></div>
+                                <div class="wf-card-body">
+                                    <p class="text-muted-custom mb-3">Hapus semua data WorkFlow. Tindakan ini tidak dapat dibatalkan!</p>
+                                    <button class="wf-btn wf-btn-danger" id="resetAllData">
+                                        <i class="bi bi-exclamation-triangle-fill"></i> Reset Semua Data
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="wf-card">
+                                <div class="wf-card-header"><h2><i class="bi bi-info-circle-fill"></i> Tentang WorkFlow</h2></div>
+                                <div class="wf-card-body">
+                                    <p class="text-muted-custom">WorkFlow v1.0 — Personal Productivity Dashboard</p>
+                                    <p class="text-muted-custom">Built with HTML, jQuery, Bootstrap 5. All data stored locally.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Sidebar Overlay (mobile) -->
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <!-- Kanban Modal -->
+    <div class="modal fade" id="kanbanModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content wf-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="kanbanModalTitle">Tambah Card</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="kanbanForm">
+                        <div class="mb-3">
+                            <label class="form-label">Judul</label>
+                            <input type="text" class="wf-input" id="kanbanCardTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Deskripsi</label>
+                            <textarea class="wf-input" id="kanbanCardDesc" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Kolom</label>
+                            <select class="wf-select" id="kanbanCardColumn">
+                                <option value="todo">To Do</option>
+                                <option value="progress">In Progress</option>
+                                <option value="done">Done</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Warna</label>
+                            <div class="color-picker-row" id="kanbanColorPicker">
+                                <button type="button" class="color-dot active" data-color="#E50027" style="background:#E50027"></button>
+                                <button type="button" class="color-dot" data-color="#3CD278" style="background:#3CD278"></button>
+                                <button type="button" class="color-dot" data-color="#3B82F6" style="background:#3B82F6"></button>
+                                <button type="button" class="color-dot" data-color="#F59E0B" style="background:#F59E0B"></button>
+                                <button type="button" class="color-dot" data-color="#8B5CF6" style="background:#8B5CF6"></button>
+                                <button type="button" class="color-dot" data-color="#EC4899" style="background:#EC4899"></button>
+                            </div>
+                        </div>
+                        <input type="hidden" id="kanbanCardId">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="wf-btn wf-btn-outline" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="wf-btn wf-btn-primary" id="saveKanbanCard">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Eisenhower Modal -->
+    <div class="modal fade" id="eisenhowerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content wf-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Task</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="eisenhowerForm">
+                        <div class="mb-3">
+                            <label class="form-label">Task</label>
+                            <input type="text" class="wf-input" id="eqTaskTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Kuadran</label>
+                            <select class="wf-select" id="eqTaskQuadrant">
+                                <option value="do">🔥 Do (Urgent & Important)</option>
+                                <option value="schedule">📅 Schedule (Not Urgent & Important)</option>
+                                <option value="delegate">👥 Delegate (Urgent & Not Important)</option>
+                                <option value="eliminate">🗑️ Eliminate (Not Urgent & Not Important)</option>
+                            </select>
+                        </div>
+                        <input type="hidden" id="eqTaskId">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="wf-btn wf-btn-outline" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="wf-btn wf-btn-primary" id="saveEqTask">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Habit Modal -->
+    <div class="modal fade" id="habitModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content wf-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Habit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="habitForm">
+                        <div class="mb-3">
+                            <label class="form-label">Nama Habit</label>
+                            <input type="text" class="wf-input" id="habitName" placeholder="Contoh: Olahraga 30 menit" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Icon</label>
+                            <select class="wf-select" id="habitIcon">
+                                <option value="💪">💪 Olahraga</option>
+                                <option value="📖">📖 Membaca</option>
+                                <option value="🧘">🧘 Meditasi</option>
+                                <option value="💧">💧 Minum Air</option>
+                                <option value="🏃">🏃 Lari</option>
+                                <option value="✍️">✍️ Menulis</option>
+                                <option value="🎯">🎯 Target</option>
+                                <option value="⭐">⭐ Bintang</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="wf-btn wf-btn-outline" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="wf-btn wf-btn-primary" id="saveHabit">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="wfToast" class="toast" role="alert">
+            <div class="toast-body" id="wfToastBody">
+                Notifikasi
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- App Scripts -->
+    <script src="js/storage.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/quotes.js"></script>
+    <script src="js/pomodoro.js"></script>
+    <script src="js/session-log.js"></script>
+    <script src="js/todo.js"></script>
+    <script src="js/kanban.js"></script>
+    <script src="js/eisenhower.js"></script>
+    <script src="js/sticky-notes.js"></script>
+    <script src="js/habits.js"></script>
+    <script src="js/ambient.js"></script>
+    <script src="js/calculator.js"></script>
+</body>
+</html>
