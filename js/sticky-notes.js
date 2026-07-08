@@ -53,12 +53,17 @@ const StickyNotes = (function() {
             const id = $(this).data('note-id');
             const note = notes.find(n => n.id === id);
             if (note) {
+                // Flush current textarea content before re-render (user may not have blurred)
+                const currentContent = $(this).find('.sticky-note-content').val();
+                note.content = currentContent;
+
                 const currentIdx = COLORS.indexOf(note.color);
                 note.color = COLORS[(currentIdx + 1) % COLORS.length];
                 save();
                 render();
             }
         });
+
     }
 
     function render() {

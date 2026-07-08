@@ -45,7 +45,7 @@ const App = (function() {
             navigateTo(page);
         });
 
-        // Mobile toggle
+    // Mobile toggle
         $('#mobileSidebarToggle').on('click', function() {
             $('#sidebar').addClass('active');
             $('#sidebarOverlay').addClass('active');
@@ -55,6 +55,21 @@ const App = (function() {
             $('#sidebar').removeClass('active');
             $(this).removeClass('active');
         });
+
+        // Desktop sidebar collapse toggle
+        $('#sidebarToggle').on('click', function() {
+            const $sidebar = $('#sidebar');
+            const $main = $('#mainContent');
+            const collapsed = $sidebar.hasClass('collapsed');
+            if (collapsed) {
+                $sidebar.removeClass('collapsed');
+                $main.css('margin-left', '260px');
+            } else {
+                $sidebar.addClass('collapsed');
+                $main.css('margin-left', '60px');
+            }
+        });
+
 
         // Load last page
         const lastPage = Storage.get('currentPage', 'dashboard');

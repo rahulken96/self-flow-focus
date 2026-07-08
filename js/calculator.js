@@ -166,18 +166,19 @@ const Calculator = (function() {
     }
 
     function evalSci(expr) {
+        // Order matters: replace function names FIRST, then standalone constants
         let clean = expr
             .replace(/×/g, '*')
             .replace(/÷/g, '/')
             .replace(/π/g, 'Math.PI')
-            .replace(/e/g, 'Math.E')
             .replace(/sin\(/g, isDegree ? 'Math.sin(Math.PI/180*' : 'Math.sin(')
             .replace(/cos\(/g, isDegree ? 'Math.cos(Math.PI/180*' : 'Math.cos(')
             .replace(/tan\(/g, isDegree ? 'Math.tan(Math.PI/180*' : 'Math.tan(')
             .replace(/log\(/g, 'Math.log10(')
             .replace(/ln\(/g, 'Math.log(')
             .replace(/sqrt\(/g, 'Math.sqrt(')
-            .replace(/\^/g, '**');
+            .replace(/\^/g, '**')
+            .replace(/\be\b/g, 'Math.E'); // standalone 'e' only, AFTER function names
 
         // Close any unclosed parentheses automatically
         let openCount = (clean.match(/\(/g) || []).length;
@@ -199,7 +200,7 @@ const Calculator = (function() {
             return val.toExponential(6);
         }
         // Round to 10 decimal places to prevent float precision issues (0.1+0.2=0.3)
-        return Number(Math.round(val + 'e10') + 'e-10').toString();
+        return Number(Math.round(+(val + 'e10')) + 'e-10').toString();
     }
 
     // ── Currency Exchange ──

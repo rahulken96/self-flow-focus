@@ -1,5 +1,5 @@
 /**
- * Quotes — Daily motivational quotes
+ * Quotes — Daily motivational quotes with favorites
  */
 const Quotes = (function() {
     'use strict';
@@ -83,12 +83,41 @@ const Quotes = (function() {
     ];
 
     let currentQuote = null;
+    let favorites = [];
 
     function init() {
+        favorites = Storage.get('quoteFavorites', []);
         loadQuote();
+        renderFavorites();
+
         $('#refreshQuote').on('click', function() {
             showRandomQuote();
             saveCurrentQuote();
+        });
+
+        // Favorite toggle
+        $('#favoriteQuoteBtn').on('click', function() {
+            if (!currentQuote) return;
+            const idx = favorites.findIndex(f => f.text === currentQuote.text && f.author === currentQuote.author);
+            if (idx === -1) {
+                favorites.push({ text: currentQuote.text, author: currentQuote.author });
+                showToast('Quote ditambahkan ke favorit! ❤️');
+            } else {
+                favorites.splice(idx, 1);
+                showToast('Quote dihapus dari favorit.');
+            }
+            Storage.set('quoteFavorites', favorites);
+            updateFavoriteBtn();
+            renderFavorites();
+        });
+
+        // Remove from favorites panel
+        $(document).on('click', '.fav-quote-remove', function() {
+            const idx = parseInt($(this).data('idx'));
+            favorites.splice(idx, 1);
+            Storage.set('quoteFavorites', favorites);
+            updateFavoriteBtn();
+            renderFavorites();
         });
     }
 
@@ -116,10 +145,40 @@ const Quotes = (function() {
     function displayQuote(q) {
         $('#quoteText').text(q.text);
         $('#quoteAuthor').text('— ' + q.author);
-        
-        // Dashboard quote
         $('#dashboardQuote').text(q.text);
         $('#dashboardQuoteAuthor').text('— ' + q.author);
+        updateFavoriteBtn();
+    }
+
+    function updateFavoriteBtn() {
+        if (!currentQuote) return;
+        const isFav = favorites.some(f => f.text === currentQuote.text && f.author === currentQuote.author);
+        const $btn = $('#favoriteQuoteBtn');
+        if (isFav) {
+            $btn.html('<i class="bi bi-heart-fill"></i> Favorit').addClass('wf-btn-danger').removeClass('wf-btn-outline');
+        } else {
+            $btn.html('<i class="bi bi-heart"></i> Simpan').removeClass('wf-btn-danger').addClass('wf-btn-outline');
+        }
+    }
+
+    function renderFavorites() {
+        const $list = $('#favoriteQuotes');
+        $list.empty();
+
+        if (favorites.length === 0) {
+            $list.html('<p class="text-muted-custom text-center" style="font-size:13px;">Belum ada quote favorit.<br>Klik ❤️ untuk menyimpan.</p>');
+            return;
+        }
+
+        favorites.forEach(function(fav, idx) {
+            $list.append(`
+                <div class="fav-quote-item" style="margin-bottom:12px;padding:10px;background:var(--bg-tertiary);border-radius:10px;position:relative;">
+                    <p style="font-size:12px;margin:0 0 4px;color:var(--text-primary);font-style:italic;">"${$('<span>').text(fav.text).html()}"</p>
+                    <span style="font-size:11px;color:var(--text-muted);font-weight:700;">— ${$('<span>').text(fav.author).html()}</span>
+                    <button class="fav-quote-remove" data-idx="${idx}" style="position:absolute;top:6px;right:6px;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;" title="Hapus dari favorit"><i class="bi bi-x-lg"></i></button>
+                </div>
+            `);
+        });
     }
 
     function saveCurrentQuote() {
@@ -129,9 +188,7 @@ const Quotes = (function() {
         }
     }
 
-    function getCurrentQuote() {
-        return currentQuote;
-    }
+    function getCurrentQuote() { return currentQuote; }
 
     return { init, getCurrentQuote, showRandomQuote };
 })();

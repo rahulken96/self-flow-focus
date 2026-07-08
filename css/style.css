@@ -207,9 +207,30 @@ a:hover { color: var(--primary-light); }
     padding: 4px 8px;
     border-radius: 8px;
     transition: all 0.2s;
+    display: flex; /* visible on desktop */
+    align-items: center;
+    justify-content: center;
+}
+.sidebar-toggle:hover { background: var(--sidebar-hover-bg); color: var(--text-primary); }
+
+/* Collapsed sidebar state (desktop toggle) */
+.sidebar.collapsed {
+    width: 60px;
+}
+.sidebar.collapsed .sidebar-brand,
+.sidebar.collapsed .nav-section-label,
+.sidebar.collapsed .nav-link span,
+.sidebar.collapsed #themeLabel {
     display: none;
 }
-.sidebar-toggle:hover { background: var(--sidebar-hover-bg); }
+.sidebar.collapsed .nav-link {
+    justify-content: center;
+    padding: 10px;
+}
+.sidebar.collapsed .nav-link i { width: auto; font-size: 20px; }
+.sidebar.collapsed .sidebar-logo { justify-content: center; }
+.sidebar.collapsed .sidebar-footer .theme-toggle-btn { justify-content: center; padding: 10px; }
+
 
 .sidebar-nav {
     flex: 1;
